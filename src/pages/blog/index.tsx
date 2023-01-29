@@ -1,24 +1,34 @@
-import React, { useContext} from 'react'
-
+import React from 'react'
 import { gql } from '@apollo/client'
-import client from '../constants/Apollo'
+import { client } from './../../../constants/Apollo'
+import Blog from '../../../components/Blog'
 
-export const getStaticProps = async () => {
-
-  const response = await client.query({
+export async function getServerSideProps() {
+  
+  const { data } = await client.query({
     query: gql`
-      query getAllPost {
-        posts(first: 12, where: {status: PUBLISH}) {
-          edges {
-            node {
-              title
-              categories {
-                nodes {
-                  name
+      # Write your query or mutation here
+      query getAllPosts {
+        posts {
+          data {
+            attributes {
+              Title
+              Slug
+              FeaturedImage {
+                data {
+                  attributes {
+                    url
+                  }
                 }
               }
-              databaseId
-              slug
+              Authors {
+                data {
+                  attributes {
+                    first_name
+                    last_name
+                  }
+                }
+              }
             }
           }
         }
@@ -27,20 +37,36 @@ export const getStaticProps = async () => {
   })
 
   return {
-    props: { blogs: response},
-    blocking: false
+    props: { data }
   }
-
 }
 
 
-export default function BlogPosts({ blogs }: any) {
+export default function BlogPosts({ data }: any) {
 
-  console.log(blogs)
+  
+  const posts = data.posts.data.map((blog:any) => {
+    return blog
+  })
+
+  
+  
 
   return (
-      <>
+  <section className="bg-dark dark:bg-gray-900">
+    <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+        <div className="mx-auto max-w-screen-sm text-center lg:mb-16 mb-8">
+            <h2 className="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Our Blog</h2>
+            <p className="font-light text-gray-500 sm:text-xl dark:text-gray-400">We use an agile approach to test assumptions and connect with the needs of your audience early and often.</p>
+        </div> 
+        <div className="grid gap-8 lg:grid-cols-2">
 
-      </>
+            { posts.map((props:any, index:number) => {
+                return <Blog props={props}  key={index} />     
+            })}
+                  
+        </div>  
+    </div>
+  </section>
   )
 }
