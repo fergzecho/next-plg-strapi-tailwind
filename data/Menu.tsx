@@ -51,7 +51,7 @@ export const Menu = [
     },
     {
         name: 'Blog',
-        slug: 'blog',
+        slug: '/blog',
         hasChildren: false,
     },
     {

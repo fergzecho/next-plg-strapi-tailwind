@@ -1,39 +1,12 @@
 import React from 'react'
-import { gql } from '@apollo/client'
 import { client } from './../../../constants/Apollo'
 import Blog from '../../../components/Blog'
+import { FILTERED_POSTS } from 'data/Posts'
 
 export async function getServerSideProps() {
   
   const { data } = await client.query({
-    query: gql`
-      # Write your query or mutation here
-      query getAllPosts {
-        posts {
-          data {
-            attributes {
-              Title
-              Slug
-              FeaturedImage {
-                data {
-                  attributes {
-                    url
-                  }
-                }
-              }
-              Authors {
-                data {
-                  attributes {
-                    first_name
-                    last_name
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    `
+    query: FILTERED_POSTS
   })
 
   return {
@@ -45,9 +18,9 @@ export async function getServerSideProps() {
 export default function BlogPosts({ data }: any) {
 
   
-  const posts = data.posts.data.map((blog:any) => {
-    return blog
-  })
+const posts = data.posts.data.map((blog:any) => {
+  return blog
+})
 
   
   
