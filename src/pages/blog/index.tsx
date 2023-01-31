@@ -1,29 +1,24 @@
-import React from 'react'
-import { client } from './../../../constants/Apollo'
+import React, { useState, useRef, Ref, MutableRefObject } from 'react'
+import { useQuery } from '@apollo/client'
 import Blog from '../../../components/Blog'
 import { FILTERED_POSTS } from 'data/Posts'
 
-export async function getServerSideProps() {
+
+export default function BlogPosts() {
+
+
+  const [search,setSearch] = useState(null);
+
+  const searchInput = useRef<HTMLInputElement | null>(null);
+
+  const { loading, error, data } = useQuery(FILTERED_POSTS, {variables: { limit: 12, search: search }});
   
-  const { data } = await client.query({
-    query: FILTERED_POSTS
-  })
 
-  return {
-    props: { data }
-  }
-}
+  if (loading) return 'Loading ...';
+  if(error) return `Error! ${error.message}`;
 
+  const { posts } = data
 
-export default function BlogPosts({ data }: any) {
-
-  
-const posts = data.posts.data.map((blog:any) => {
-  return blog
-})
-
-  
-  
 
   return (
   <section className="bg-dark dark:bg-gray-900">
@@ -34,9 +29,15 @@ const posts = data.posts.data.map((blog:any) => {
         </div> 
         <div className="grid gap-8 lg:grid-cols-2">
 
-            { posts.map((props:any, index:number) => {
-                return <Blog props={props}  key={index} />     
-            })}
+            <div>
+                <input type="text" ref={searchInput} onChange={(e) => {
+                    e.preventDefault();
+
+                    setSearch(searchInput.current?.value)
+                }}/>
+            </div>
+
+            <pre>{ JSON.stringify(posts, null, 2)}</pre>
                   
         </div>  
     </div>

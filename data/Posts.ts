@@ -42,8 +42,8 @@ export const GET_SINGLE_POST = gql`
 `;
 
 export const FILTERED_POSTS = gql`
-    query getAllPosts {
-        posts {
+    query getAllPosts( $limit: Int, $search: String ) {
+        posts(pagination: { start: 0, limit: $limit}, filters: {Title: { contains: $search }}  ) {
             data {
             attributes {
                 Title
