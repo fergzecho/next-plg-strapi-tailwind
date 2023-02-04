@@ -75,11 +75,7 @@ const SignIn: FC = () => {
                 <>
                     <br />
                     <br />
-                    <button type="button">
-                        <a href={providers?.google.signinUrl ?? 'http://localhost:3000'}>
-                            Sign In Using Google
-                        </a>
-                    </button>
+                    <button type="button" onClick={ () => { signIn('google')}}>Sign In Using Google</button>
                 </>
             )}
         </>
