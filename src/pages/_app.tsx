@@ -2,14 +2,15 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { ApolloProvider } from '@apollo/client';
 import {client} from '../../constants/Apollo'
-import { AuthProvider } from 'context/AuthContext';
+import { SessionProvider } from 'next-auth/react'
 
-export default function App({ Component, pageProps }: AppProps) {
+
+export default function App({ Component, pageProps: { session, ...pageProps} }: AppProps) {
   return (
     <ApolloProvider client={client} >
-      <AuthProvider>
-      <Component {...pageProps} />
-      </AuthProvider>
+      <SessionProvider session={session}>
+        <Component {...pageProps} />
+      </SessionProvider>
     </ApolloProvider>
 
   )

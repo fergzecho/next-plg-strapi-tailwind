@@ -37,20 +37,20 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
 
-    const token = localStorage.getItem('user');
+    // const token = localStorage.getItem('user');
     
-    if (token) {
+    // if (token) {
 
-      try {
-       setUser(token as string)
+    //   try {
+    //    setUser(token as string)
   
-      } catch (err) {
+    //   } catch (err) {
         
-        console.log(err.message)
-        localStorage.removeItem('user');
+    //     console.log(err.message)
+    //     localStorage.removeItem('user');
 
-      }
-    }
+    //   }
+    // }
 
   },[])
 

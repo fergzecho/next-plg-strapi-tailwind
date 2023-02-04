@@ -1,33 +1,34 @@
-import React, { FormEventHandler, useRef, useContext } from 'react'
-import { AuthContext } from 'context/AuthContext';
-
-
+import { useSession, signIn, signOut } from "next-auth/react"
+import { FormEventHandler, HTMLInputTypeAttribute, useRef } from "react";
 
 export default function Login() {
-
-  const { login } = useContext(AuthContext)
-
-  const username = useRef<HTMLInputElement>(null);
-  const password = useRef<HTMLInputElement>(null)
+  const { data: session, status } = useSession();
+  
+  const email = useRef<HTMLInputElement | undefined>()
+  const password = useRef<HTMLInputElement | undefined>()
 
   const handleSubmit:FormEventHandler = (e) => {
     e.preventDefault();
-    
-    login (username?.current?.value,password?.current?.value)
 
-
- 
+    signIn('Credentials', {redirect: false, email: email?.current?.value, password: password?.current?.value})
   }
 
+  if (session) {
+    return (
+      <>
+        Signed in as {session?.user?.email} <br />
+        <button onClick={() => signOut()}>Sign out</button>
+      </>
+    )
+  }
   return (
     <>
-    <form className="flex flex-row gap-2 mt-8" onSubmit={handleSubmit}>
-        <input type="text" defaultValue="fernando@productled.com" ref={username} />
-        <input type="password" defaultValue="!@#Yagami1231" ref={password} />
-        <button>Login</button>
-    </form> 
-            
+      Not signed in <br />
+      <form onSubmit={handleSubmit}>
+          <input type="email" name="email" id="email" ref={email}/>
+          <input type="password" name="password" id="password" ref={password} />
+          <input type="submit" value="Login" />
+      </form>
     </>
-    
   )
 }
