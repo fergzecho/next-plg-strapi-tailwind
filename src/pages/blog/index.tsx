@@ -30,11 +30,7 @@ export default function BlogPosts() {
         <div className="grid gap-8 lg:grid-cols-2">
 
             <div>
-                <input type="text" ref={searchInput} onChange={(e) => {
-                    e.preventDefault();
-
-                    setSearch(searchInput.current?.value)
-                }}/>
+                <input type="text" ref={searchInput}/>
             </div>
 
             <pre>{ JSON.stringify(posts, null, 2)}</pre>

@@ -24,13 +24,11 @@ const SignIn: FC = () => {
     const handleSubmit:FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
 
-        console.log("email",email.current?.value)
-        console.log("email",password.current?.value)
-        const res = await signIn('credentials', { 
-            email: email?.current?.value,
-            password: password?.current?.value,
-            redirection: false
-            })
+    const res = await signIn('credentials', { 
+        email: email?.current?.value,
+        password: password?.current?.value,
+        redirection: false
+    })
 
         
 

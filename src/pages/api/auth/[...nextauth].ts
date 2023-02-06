@@ -6,59 +6,52 @@ import OutsetaApiClient from 'outseta-api-client';
 export default NextAuth({
   providers: [
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. 'Sign in with...')
       name: 'Credentials',
       type: 'credentials',
-      // The credentials is used to generate a suitable form on the sign in page.
-      // You can specify whatever fields you are expecting to be submitted.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
-      credentials: {
-        
-      }
-      ,
-      async authorize(credentials, req) {
+      async authorize(credentials) {
 
-        const { email, password} = credentials as {
-          email: string,
-          password: string
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
+
+        let client = new OutsetaApiClient({
+          subdomain: process.env.NEXT_PUBLIC_OUTSETA_SUBDOMAIN as string
+        });
+
+        // get users access token
+        const response = await client.user.login(email, password);
+
+        if (!response) {
+          return null;
         }
 
-        if(credentials) {
+        const token = response.access_token;
 
-          let client = new OutsetaApiClient({
-            subdomain: process.env.NEXT_PUBLIC_OUTSETA_SUBDOMAIN as string
-          });
-  
-          const response = await client.user.login(email,password);
-  
-          if( !response ) {
-            return null;
-          } else {
-  
-            const token = response.access_token;
-            
-            const loggedIn = new OutsetaApiClient({
-              subdomain: process.env.NEXT_PUBLIC_OUTSETA_SUBDOMAIN as string,
-              accessToken: token,
-            });
-  
-            const user_get = await loggedIn.user.profile.get();
-  
-            return {
-              id: user_get?.Uid,
-              name: user_get?.FullName,
-              email: user_get?.Email
-            }
+        // request the users data information by passing the the access token as one of the parameters.
+        const clientWith = new OutsetaApiClient({
+          subdomain: process.env.NEXT_PUBLIC_OUTSETA_SUBDOMAIN as string,
+          accessToken: token,
+        });
 
-        }
+        const get_user = await clientWith.user.profile.get();
 
+        if (!get_user) {
+          return null;
+        };
 
-        return null
+        const User = {
+          id: get_user?.Uid,
+          name: get_user?.FullName,
+          image: get_user.ProfileImageS3Url,
+          email: get_user?.Email,
+          outseta: { ...get_user }
+        };
 
-        }
+        return User;
 
       },
+      credentials: undefined
     }),
     // ...add more providers here
     GoogleProvider({
@@ -70,7 +63,8 @@ export default NextAuth({
           access_type: "offline",
           response_type: "code"
         }
-      }
+      },
+
     })
     // .. add more providers here
   ],
@@ -90,16 +84,16 @@ export default NextAuth({
 
       return true;
     },
-    async jwt({ token, account }) {
+    async jwt({ user, token, account }) {
       // Persist the OAuth access_token to the token right after signin
-      if (account) {
-        token.accessToken = account.access_token
-      }
+      
+      user && (token.user = user)
       return token
     },
 
-    async session({ session, user, token }) {
-    
+    async session({ session, token }) {
+      
+      session.user = token.user
       return session
     },
 

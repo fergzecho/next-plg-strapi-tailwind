@@ -5,6 +5,9 @@ export default function Home() {
 
   const { data: session, status } = useSession()
   
+  const user = session
+  
+  console.log(user)
 
   return (
     <>
@@ -16,7 +19,7 @@ export default function Home() {
       </Head>
       <main className="">
 
-          { session && session.user?.name }
+          
 
           { session && <button type="button" onClick={() => {signOut()}}>Signout</button> }
 

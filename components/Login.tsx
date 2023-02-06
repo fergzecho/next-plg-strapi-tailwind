@@ -4,8 +4,8 @@ import { FormEventHandler, HTMLInputTypeAttribute, useRef } from "react";
 export default function Login() {
   const { data: session, status } = useSession();
   
-  const email = useRef<HTMLInputElement | undefined>()
-  const password = useRef<HTMLInputElement | undefined>()
+  const email = useRef<HTMLInputElement | null>(null)
+  const password = useRef<HTMLInputElement | null>(null)
 
   const handleSubmit:FormEventHandler = (e) => {
     e.preventDefault();
