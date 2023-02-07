@@ -80,20 +80,83 @@ export default NextAuth({
     // newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
   },
   callbacks: {
-    async signIn({ credentials }) {
+    async signIn({ credentials, account ,profile }) {
+
+      if(credentials) {
+        return true;
+      }
+
+      if(account.provider === 'google') {
+          console.log('account', account)
+          console.log('profile', profile)
+          return true;
+        
+      }
+
 
       return true;
     },
-    async jwt({ user, token, account }) {
+    async jwt({ user, token, account, profile }) {
       // Persist the OAuth access_token to the token right after signin
+
+
+      if(account?.provider == 'google') {
+          // console.log('id_token awesome', account.id_token)
+          // console.log('email awesome ', token.email)
+
+          const response = await fetch(`https://${process.env.NEXT_PUBLIC_OUTSETA_SUBDOMAIN}.outseta.com/api/v1/tokens`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'GoogleIdToken': account.id_token as string,
+            },
+            body: `username=${token.email}`,
+            
+          })
+
+          const access = await response.json();
+
+          if(!access) {
+            return null;
+          }
+
+          const clientWith = new OutsetaApiClient({
+            subdomain: process.env.NEXT_PUBLIC_OUTSETA_SUBDOMAIN as string,
+            accessToken: access.access_token,
+          });
+
+          const get_user = await clientWith.user.profile.get();
+
+          if (!get_user) {
+            return null;
+          };
+
+          const user = {
+            id: get_user?.Uid,
+            name: get_user?.FullName,
+            image: get_user.ProfileImageS3Url,
+            email: get_user?.Email,
+            outseta: { ...get_user }
+          };
+
+          token.user = user;
+
+      }
+
+      if(account?.provider === 'credentials') {
+          user && (token.user = user)
+      }
       
-      user && (token.user = user)
+      
+
       return token
     },
 
-    async session({ session, token }) {
-      
+    async session({ session, token, user }) {
+
+
       session.user = token.user
+
       return session
     },
 

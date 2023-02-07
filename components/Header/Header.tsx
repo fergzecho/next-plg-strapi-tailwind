@@ -1,16 +1,17 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import logo from '../../public/logo.svg'
-import { Menu } from '../../data/Menu'
+import Image from 'next/image';
+import Link from 'next/link';
+import logo from './../../public/logo.svg';
+import { Menu } from '../../data/Menu';
 
 export default function Header() {
+
+
   return (
     <header>
     <nav className="bg-dark border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
           <Link href="/" className="flex items-center">
             <Image src={logo} className="mr-3 h-4 sm:h-9" alt="Logo" />
-            
           </Link>
             
             <div className="flex items-center lg:order-2">

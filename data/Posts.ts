@@ -6,10 +6,48 @@ export const GET_ALL_POSTS = gql`
             data {
             attributes {    
                 Slug
-            }
+                }
             }
         }
     }
+`;
+
+export const GET_ALL_POSTS_API = gql`
+    query getAllPosts {
+        posts {
+            data {
+                attributes {
+                        Title
+                        Slug
+                        Content
+                        FeaturedImage {
+                            data {
+                                attributes {
+                                    url
+                                    size
+                                    height
+                                    width
+                                }
+                            }
+                        }
+                        SEO {
+                            Title
+                            featured_image {
+                                data {
+                                     attributes {
+                                            url
+                                            size
+                                            height
+                                            width
+                                     }
+                                }
+                            }
+                        }
+                }
+            }
+        }
+    }   
+
 `;
 
 export const GET_SINGLE_POST = gql`

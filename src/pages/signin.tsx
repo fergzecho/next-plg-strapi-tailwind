@@ -65,9 +65,6 @@ const SignIn: FC = () => {
             </>
             
             
-            
-            { console.log(providers)}
-            
 
             { providers?.google && (
                 <>

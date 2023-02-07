@@ -1,13 +1,10 @@
 import Head from 'next/head'
-import { useSession,signOut, signIn } from 'next-auth/react'
+import { useSession ,signOut, signIn } from 'next-auth/react'
 
 export default function Home() {
 
   const { data: session, status } = useSession()
-  
-  const user = session
-  
-  console.log(user)
+
 
   return (
     <>
@@ -19,7 +16,7 @@ export default function Home() {
       </Head>
       <main className="">
 
-          
+          { session && <pre>{JSON.stringify(session, null, 2)}</pre> }
 
           { session && <button type="button" onClick={() => {signOut()}}>Signout</button> }
 
